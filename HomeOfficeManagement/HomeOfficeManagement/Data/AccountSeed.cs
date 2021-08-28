@@ -44,7 +44,7 @@ namespace HomeOfficeManagement.Data
             IdentityResult result = null;
             if ((await userManager.FindByNameAsync(defaultUser.UserName.ToUpper())) == null)
             {
-                result = await userManager.CreateAsync(defaultUser, "Asd123!@#");
+                result = await userManager.CreateAsync(defaultUser, "Password#123");
                 if (result.Succeeded)
                 {
 

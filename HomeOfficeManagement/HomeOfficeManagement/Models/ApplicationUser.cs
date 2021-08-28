@@ -9,5 +9,6 @@ namespace HomeOfficeManagement.Models
     public class ApplicationUser : IdentityUser
     {
         public string FirstName { get; set; }
+        public bool BlockStutas { get; set; }
     }
 }

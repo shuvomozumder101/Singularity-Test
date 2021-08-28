@@ -16,5 +16,6 @@ namespace HomeOfficeManagement.Data
         }
         public DbSet<Attendees> Attendees { get; set; }
         public DbSet<WorkList> WorkList { get; set; }
+        public DbSet<ApplicationUser> AspNetUsers { get; set; }
     }
 }

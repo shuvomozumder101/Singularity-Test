@@ -6,16 +6,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Claims;
+using HomeOfficeManagement.Models;
 
 namespace HomeOfficeManagement.Controllers
 {
     public class Dashboard : Controller
     {
         private readonly ApplicationDbContext _applicationDbContext;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public Dashboard(ApplicationDbContext applicationDbContext , SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+        public Dashboard(ApplicationDbContext applicationDbContext , SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
         {
             _applicationDbContext = applicationDbContext;
             _signInManager = signInManager;
@@ -26,9 +27,23 @@ namespace HomeOfficeManagement.Controllers
             var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByIdAsync(UserId);
             var roles = await _userManager.GetRolesAsync(user);
+            for (int i = 1; i<= roles.Count(); i++)
+            {
+                if (roles[i - 1].Trim().ToLower() == "superadmin")
+                {
+                    return RedirectToAction("AdminDashboard");
 
-            //var roles =  _userManager.GetRolesAsync(user);
+                }
+                else if (roles[i - 1].Trim().ToLower() == "employee")
+                {
+                    return RedirectToAction("UserDashboard");
+                }
+                else
+                    continue;
+                
+            }
             return View();
+
         }
         public IActionResult UserDashboard()
         {
@@ -36,7 +51,11 @@ namespace HomeOfficeManagement.Controllers
         }
         public IActionResult AdminDashboard()
         {
-            return View();
+            var user = _applicationDbContext.AspNetUsers.ToList();
+            ViewBag.user = user.Count();
+            ViewBag.blockUser = user.Where(x => x.BlockStutas == true).Count();
+            ViewBag.present = _applicationDbContext.Attendees.Where(x => x.Date == DateTime.Today).Count();
+            return View(user);
         }
     }
 }
